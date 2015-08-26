@@ -118,8 +118,19 @@
 
 ;;;Writing Attributes;;;
 
-;; (defun overwrite-association-to-alist (association existing-alist)
-;;   "Accepts as arguments 1) a cons cell containing an association, and 2) an alist.  Will return an alist with 'association' modified"
+ (defun overwrite-association-to-alist (association existing-alist)
+  "Accepts as arguments 1) a cons cell containing an association, and 2) an alist.  Will return an alist with the new association added or overwritten."
+  (let ((alist-with-delete nil))
+    (set 'alist-with-delete 
+	 (delete (assoc (car association) existing-alist) existing-alist))
+    (append alist-with-delete `(,association))))
+
+(defun write-attribute-to-entry-data (attribute gorg-entry)
+  "Accepts as arguments 1) a cons cell containing an entry attribute, and 2) a cons cell containing a gorg entry.  Returns a gorg entry cons cell with the new attribute written."
+  (let ((new-gorg-entry '(nil . nil)))
+    (setcar new-gorg-entry (car gorg-entry))
+    (setcdr new-gorg-entry (overwrite-association-to-alist attribute (cdr gorg-entry)))
+    new-gorg-entry))
 
 ;set gorg-directory
 (set 'gorg-directory "/Users/lucasamodeonewman/Dropbox/Gorg/gorg-data")
