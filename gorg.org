@@ -1,0 +1,79 @@
+* Initiatives
+** TODO [[*Gorg%20Rendering][Gorg Rendering]]
+* Content
+** Gorg Data
+Gorg data is the structured network of chunks which records all activity done while using gorg-mode.  It is the imprint of gorg-mode which will be saved after a session is complete, and which can be recalled at the start of the next session.  Gorg data is the substance of gorg-mode; the transcribed ideas, properties, and interconnections which represent the essential contribution of gorg as a budding exo-mind.
+
+At the outset, we can consider gorg data through two lenses: 1) as a theoretical structure of chunks and interconnections, and 2) as computer data requiring implementation.
+*** Theoretical Structure
+At the most basic theoretical level, gorg data consists of entries with attributes.  
+**** Entries
+Entries are the categorical atoms of gorg mode.  Each entry is %100 unique and distinguishable from each other entry, made so by a unique, never repeated index number.  Each entry is uniquely recallable by its index number.  Future entries will never share index numbers with past entries.
+
+Entries themselves are baskets of attributes.  All the substance of an entry lies in its attributes.
+**** Attributes
+:PROPERTIES:
+:ID:       2A02A50D-369A-4AA7-827E-FEF79A38CE66
+:END:
+Attributes are the substantive atoms of gorg mode.  Each attribute consists of a name and body; the name identifies the attribute, and the body contains the content of the attribute.  Each attribute is unique with respect to the entry of which it is a part; no other attribute of that same entry will share its name.  Of course, many other entries may have an attribute of the same name.
+*** Implementation
+At the implementation level, gorg data needs to exist in at least two states; stored, and live.  In its stored state, gorg data need only be persistent and accessible.  In its live state, gorg data must be manipulable by the environments through which it is used.  For our purposes below, this environment is Emacs.
+**** stored data
+As currently implemented, the primary storage state of gorg data is JSON.  JSON provides all the needed data types for the purposes of gorg, and the pre-existing package gorg.el works well for reading from JSON text files and writing to them.
+**** live data
+Gorg data while live exists as Elisp data. 
+
+Gorg data is constructed in Elisp entirely using two structures: cons cell and alist.  What follows is the core terminology for each unit of gorg data:
+***** gorg data
+Any of the below structures
+***** gorg entry list
+- elisp type: alist
+- each element is a [[id:B6DF5539-03CF-4D34-A332-08CFDE151735][gorg entry]]
+***** gorg entry
+:PROPERTIES:
+:ID:       B6DF5539-03CF-4D34-A332-08CFDE151735
+:END: 
+- elisp type: cons cell
+- the car is an indexstring
+- the cdr is a [[id:57E4ABF2-F6B9-4A97-805E-387AB1240BA3][gorg attributes list]]
+***** gorg attributes list
+:PROPERTIES:
+:ID:       57E4ABF2-F6B9-4A97-805E-387AB1240BA3
+:END:
+- elisp type: alist
+- each element is a [[id:7BE13DF2-DCBF-44DC-AE64-E3AA51CC5997][gorg attribute]]
+***** gorg attribute
+:PROPERTIES:
+:ID:       7BE13DF2-DCBF-44DC-AE64-E3AA51CC5997
+:END:
+- elisp type: cons cell
+- the car is a string containing the attribute name
+- the cdr is a string containing the attribute body
+
+** Gorg Interfaces
+A gorg interface is the collection of buffer phenomena through which the user experiences and manipulates gorg data.
+
+Interfaces are 
+
+Segments are the components of the interface which appear in the buffer, and through which gorg networks are experienced and manipulated.
+*** segments
+A segment itself is a plist, consisting of the following elements:
+
+string - the string of characters displayed within the segment
+buffer - a buffer object, corresponding to the buffer in which the interface (of which this segment is a component) is rendered
+start - a marker pointing to the starting position of the segment in buffer
+end - a marker pointing to the ending position of the segment in buffer
+properties - a plist of text properties to be used in displaying the segment
+
+**** rendering segments
+segments are rendered by the function [[file:gorg-modules/gorg-outline.el::(defun%20gorg-render-segment%20(segment)][gorg-render-segment]], which uses the string, buffer, markers, and text properties it specifies to insert the segment into the live interface
+
+**** creating segments
+segments are created by the function [[file:gorg-modules/gorg-outline.el::(defun%20gorg-create-new-segment%20(input-string%20segment-type%20buffer)][gorg-create-new-segment]], which uses a gorg data subset, a segment type, and a buffer object to create a plist which is render ready.
+***** segment type definitions
+A segment type definiition specifies: A) a lambda used to convert the gorg data to the segment string, B) the text properties used to render the segment in buffer.  The documentation string of the lambda should specify the types of gorg data it can accept.
+***** segment type listp
+A segment type list is a look up table that pairs the name of a segment type with the segment type definition.  This is to be loaded from some type of init file, and passed into the segment constructor along with the name.
+
+
+
